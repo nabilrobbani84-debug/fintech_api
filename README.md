@@ -42,6 +42,24 @@ flowchart LR
    - Auth Swagger: http://localhost:8080/swagger/
    - Transaction Swagger: http://localhost:8081/swagger/
 
+## Demo Streamlit
+
+Repo ini juga menyediakan demo Streamlit ringan untuk kebutuhan portfolio/live demo. Demo ini tidak menghubungkan ke service produksi atau memindahkan uang; isinya berupa showcase arsitektur, endpoint explorer, snapshot ledger, dan simulasi transaksi aman.
+
+Jalankan lokal:
+
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+Deploy ke Streamlit Community Cloud:
+
+- Repository: `nabilrobbani84-debug/fintech_api`
+- Branch: `main`
+- Main file path: `streamlit_app.py`
+- Suggested app URL: `fintech-core-api`
+
 ## Endpoint Utama
 
 Auth Service:
