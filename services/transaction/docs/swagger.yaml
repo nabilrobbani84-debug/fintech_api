@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: FinTech Core Transaction API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081
+paths:
+  /healthz:
+    get:
+      responses:
+        "200":
+          description: Healthy
+  /api/v1/accounts:
+    post:
+      security:
+        - bearerAuth: []
+      summary: Create account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currency:
+                  type: string
+                  example: IDR
+      responses:
+        "201":
+          description: Created
+    get:
+      security:
+        - bearerAuth: []
+      summary: List accounts
+      responses:
+        "200":
+          description: Accounts
+  /api/v1/transactions/deposit:
+    post:
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoneyInput"
+      responses:
+        "200":
+          description: Deposited
+  /api/v1/transactions/withdraw:
+    post:
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoneyInput"
+      responses:
+        "200":
+          description: Withdrawn
+  /api/v1/transactions/transfer:
+    post:
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferInput"
+      responses:
+        "200":
+          description: Transferred
+  /api/v1/transactions:
+    get:
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: account_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Transactions
+  /api/v1/reports/monthly-balance:
+    get:
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: account_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: months
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Monthly balance points
+  /api/v1/events:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Transaction event stream
+      responses:
+        "200":
+          description: Server-Sent Events
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    MoneyInput:
+      type: object
+      required: [account_id, amount_cents]
+      properties:
+        account_id:
+          type: string
+        amount_cents:
+          type: integer
+          format: int64
+          minimum: 1
+        description:
+          type: string
+          maxLength: 280
+    TransferInput:
+      type: object
+      required: [from_account_id, to_account_id, amount_cents]
+      properties:
+        from_account_id:
+          type: string
+        to_account_id:
+          type: string
+        amount_cents:
+          type: integer
+          format: int64
+          minimum: 1
+        description:
+          type: string
+          maxLength: 280
+

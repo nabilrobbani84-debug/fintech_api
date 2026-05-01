@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package fintech.auth.v1;
+
+option go_package = "github.com/example/fintech-core-api/proto/auth;authv1";
+
+service AuthService {
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+}
+
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+message ValidateTokenResponse {
+  bool valid = 1;
+  string user_id = 2;
+  string role = 3;
+  string error = 4;
+}
+

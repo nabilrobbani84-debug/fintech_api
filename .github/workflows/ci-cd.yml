@@ -1,0 +1,56 @@
+name: ci-cd
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  go-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth, transaction]
+    defaults:
+      run:
+        working-directory: services/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.x"
+          cache-dependency-path: services/${{ matrix.service }}/go.sum
+      - run: go mod download
+      - run: go test ./...
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend/dashboard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: [go-test, frontend-build]
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t fintech-auth:${{ github.sha }} services/auth
+      - run: docker build -t fintech-transaction:${{ github.sha }} services/transaction
+      - run: docker build -t fintech-dashboard:${{ github.sha }} frontend/dashboard
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - run: echo "Deploy step placeholder: push images and apply Kubernetes/Terraform here."
+

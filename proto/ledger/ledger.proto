@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package fintech.ledger.v1;
+
+option go_package = "github.com/example/fintech-core-api/proto/ledger;ledgerv1";
+
+service LedgerService {
+  rpc GetAccountBalance(GetAccountBalanceRequest) returns (GetAccountBalanceResponse);
+}
+
+message GetAccountBalanceRequest {
+  string account_id = 1;
+}
+
+message GetAccountBalanceResponse {
+  string account_id = 1;
+  string owner_user_id = 2;
+  string currency = 3;
+  int64 balance_cents = 4;
+}
+
